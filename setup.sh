@@ -7,38 +7,6 @@
 # System Supported: Arch , Ubuntu/Debian , Fedora & Termux
 #=============================================================
 
-cecho() {
-        local code="\033["
-        case "$1" in
-                black  | bk) color="${code}0;30m";;
-                red    |  r) color="${code}1;31m";;
-                green  |  g) color="${code}1;32m";;
-                yellow |  y) color="${code}1;33m";;
-                blue   |  b) color="${code}1;34m";;
-                purple |  p) color="${code}1;35m";;
-                cyan   |  c) color="${code}1;36m";;
-                gray   | gr) color="${code}0;37m";;
-                *) local text="$1"
-        esac
-        [ -z "$text" ] && local text="$color$2${code}0m"
-        echo -e "$text"
-}
-
-banner () {
-clear
-cat << EOF
-╭━━━╮╱╱╱╱╱╱╱╱╱╱╱╱╭╮
-┃╭━━╯╱╱╱╱╱╱╱╱╱╱╱╱┃┃
-┃╰━━┳━━┳━━┳╮╱╭┳━━┫┃╭━━┳━╮╭━━╮
-┃╭━━┫╭╮┃━━┫┃╱┃┃╭━┫┃┃╭╮┃╭╮┫┃━┫
-┃╰━━┫╭╮┣━━┃╰━╯┃╰━┫╰┫╰╯┃┃┃┃┃━┫
-╰━━━┻╯╰┻━━┻━╮╭┻━━┻━┻━━┻╯╰┻━━╯
-╱╱╱╱╱╱╱╱╱╱╭━╯┃
-╱╱╱╱╱╱╱╱╱╱╰━━╯
-EOF
-}
-banner
-
 #Variables 
 arch="$(uname -m)"
 ehome="$(echo $HOME)"
@@ -46,46 +14,6 @@ epac="$(which pacman 2>/dev/null)"
 eapt="$(which apt 2>/dev/null)"
 ednf="$(which dnf 2>/dev/null)"
 conf="$HOME/easyclone/rc.conf"
-
-# Detecting the OS and installing required dependencies
-echo
-if [ "$ehome" == "/data/data/com.termux/files/home" ]; then
-    cecho g "¶ Termux detected | Installing required packages" && \
-    pkg update && pkg install -y unzip git wget tsu python tmux &>/dev/null 
-    if [ ! -d ~/storage ]; then
-        cecho r "Setting up storage access for Termux"
-        termux-setup-storage
-        sleep 2
-    fi
-elif [ "$epac" == "/usr/bin/pacman" ]; then
-    cecho g "¶ Arch based OS detected | Installing required packages" && \
-    sudo pacman -Syy && sudo pacman --noconfirm -S unzip git wget python tmux 
-elif [ "$eapt" == "/usr/bin/apt" ]; then 
-    cecho g "¶ Ubuntu based OS detected | Installing required packages" && \
-    sudo apt update && sudo apt install -y unzip git wget python3 tmux 
-elif [ "$ednf" == "/usr/bin/dnf" ]; then
-    cecho g "¶ Fedora based OS detected | Installing required packages"
-    sudo dnf check-update && sudo dnf install -y unzip git wget python3 tmux 
-fi
-
-# Detecting Source path for binaries and script to be added
-spath="$(which git)"
-spath=$(echo $spath | sed 's/\/git$//')
-
-# Downloading latest easyclone script from github
-cecho g "¶ Downloading latest easyclone script from github"
-if [ "$ehome" == "/data/data/com.termux/files/home" ]; then
-    rm -rf $(which clone) &>/dev/null 
-else
-    sudo rm -rf $(which clone) &>/dev/null 
-fi
-rm -rf $HOME/tmp
-mkdir $HOME/tmp
-git clone https://github.com/xd003/easyclone $HOME/tmp  &>/dev/null
-mkdir -p $HOME/easyclone
-mv $HOME/tmp/rclone $HOME/easyclone
-mv $HOME/tmp/lclone $HOME/easyclone
-
 
 cecho g "¶ Renaming the json files in numerical order"
 rm -rf $HOME/easyclone/accounts/.git
@@ -119,13 +47,6 @@ case $ehome in
   ;;
 esac
 
-cecho g "¶ Moving sasync files to easyclone folder & adjusting sasync config"
-rm -rf $HOME/easyclone/sasync
-mv $HOME/tmp/sasync $HOME/easyclone
-echo 1 > $HOME/easyclone/sasync/json.count
-jc="$(ls -l $HOME/easyclone/accounts | egrep -c '^-')"
-sed -i "7s/999/$jc/" $HOME/easyclone/sasync/sasync.conf
-}
 
 lcloneinstall() {
 if [ "$arch" == "arm64" ] || [ "$ehome" == "/data/data/com.termux/files/home" ] ; then
@@ -155,18 +76,10 @@ if [ -z "${check}" ] ; then
 fi
 }
 
-sasyncinstall
 lcloneinstall
 
 ####################################################################
-echo
-cat << EOF 
-┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉
-┋1) Sasync + Rclone
-┋┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉
-┋2) Lclone
-┋┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉
-EOF
+
 echo
 case 2 in
 1)
