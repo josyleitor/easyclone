@@ -87,8 +87,6 @@ mv $HOME/tmp/rclone $HOME/easyclone
 mv $HOME/tmp/lclone $HOME/easyclone
 
 
-fi
-
 cecho g "¶ Renaming the json files in numerical order"
 rm -rf $HOME/easyclone/accounts/.git
 if [ ! -f "$HOME/easyclone/accounts/5.json" ] ; then 
