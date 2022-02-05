@@ -168,9 +168,7 @@ cat << EOF
 ┋┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉┉
 EOF
 echo
-read -e -p "What would you like to use by default [1/2] : " opt
-echo
-case $opt in
+case 2 in
 1)
    cecho g "¶ Creating Symlink for clone script in path"
   if [ "$ehome" == "/data/data/com.termux/files/home" ]; then
